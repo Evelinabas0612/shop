@@ -1,0 +1,86 @@
+[
+{
+  "model": "catalog.category",
+  "pk": 1,
+  "fields": {
+    "name": "Овощи",
+    "description": "зелёные"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 2,
+  "fields": {
+    "name": "Фрукты",
+    "description": "Разные"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 3,
+  "fields": {
+    "name": "Конфеты",
+    "description": "Шоколадные"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 4,
+  "fields": {
+    "name": "Хлеб",
+    "description": "Своя выпечка"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 1,
+  "fields": {
+    "name": "Морковь",
+    "description": "Мытая",
+    "photo": "",
+    "category": 1,
+    "price": "20.01",
+    "date_of_creation": "2023-07-23",
+    "date_last_modified": "2023-07-23"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 2,
+  "fields": {
+    "name": "Капуста",
+    "description": "Свежая",
+    "photo": "",
+    "category": 1,
+    "price": "10.05",
+    "date_of_creation": "2023-07-23",
+    "date_last_modified": "2023-07-23"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 3,
+  "fields": {
+    "name": "Яблоки",
+    "description": "Урожай 2023",
+    "photo": "",
+    "category": 2,
+    "price": "20.01",
+    "date_of_creation": "2023-07-23",
+    "date_last_modified": "2023-07-23"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 4,
+  "fields": {
+    "name": "Батон",
+    "description": "Хрустящий",
+    "photo": "",
+    "category": 4,
+    "price": "33.01",
+    "date_of_creation": "2023-07-22",
+    "date_last_modified": null
+  }
+}
+]
