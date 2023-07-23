@@ -8,7 +8,7 @@ class Category(models.Model):
     """Модель Category"""
     name = models.CharField(max_length=200, verbose_name='Наименование')
     description = models.TextField(max_length=500, verbose_name='Описание')
-    created_at = models.DateField(verbose_name='Дата изготовления', default=timezone.now)
+    #created_at = models.DateField(verbose_name='Дата изготовления', default=timezone.now)
 
     def __str__(self):
         return f'{self.name} ({self.description})'
