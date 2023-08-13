@@ -1,0 +1,19 @@
+{% extends 'catalog/base.html' %}
+{% load my_templatetags %}
+
+{% block content%}
+{% for object in object_list %}
+<div class="col-6 text-center">
+           <div class="card" style="width: 25rem;">
+                <img src="{% my_path object.image %}" class="card-img-top" alt={% my_path
+                     object.image %}>
+                <div class="card-body">
+                    <h5 class="card-title">{{object.name}}</h5>
+                    <h4 class="card-title">{{object.price}} руб.</h4>
+                    <p class="card-text">{{object.description}}</p>
+                    <h6 class="card-text">{{object.photo}}</h6>
+                </div>
+            </div>
+        </div>
+ {% endfor %}
+{% endblock %}

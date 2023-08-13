@@ -8,7 +8,7 @@ class Category(models.Model):
     """Модель Category"""
     name = models.CharField(max_length=200, verbose_name='Наименование')
     description = models.TextField(max_length=500, verbose_name='Описание')
-    #created_at = models.DateField(verbose_name='Дата изготовления', default=timezone.now)
+
 
     def __str__(self):
         return f'{self.name} ({self.description})'
@@ -24,7 +24,6 @@ class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='Наименование')
     description = models.TextField(max_length=500, verbose_name='Описание')
     photo = models.ImageField(upload_to='products/', **NULLABLE, verbose_name='Изображение')
-    # category = models.CharField(max_length=100, verbose_name='Категория')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='Категория')
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Цена за покупку')
     date_of_creation = models.DateField(verbose_name='Дата создания')
