@@ -34,3 +34,10 @@ def product(request, pk):
     return render(request, 'catalog\product.html', context)
 
 
+def item(request, pk):
+    product_item = Product.objects.get(pk=pk)
+    context = {
+        'object': product_item,
+        'title': product_item.name
+    }
+    return render(request, 'catalog/item.html', context)

@@ -1,0 +1,45 @@
+{% extends 'catalog/base.html' %}
+
+
+{% block content%}
+{% load my_templatetags %}
+<div class="col">
+        <div class="card">
+            <div class="card-body">
+                <img src="{% mediapath object.img %}" alt="Изображение"  width="450" height="300"/>
+                <table class="table">
+                    <tr>
+                        <td>Наименованиепродукта</td>
+                        <td>{{ object.name }} </td>
+                    </tr>
+                    <tr>
+                        <td>Описание продукта</td>
+                        <td>{{ object.description }}</td>
+                    </tr>
+                    <tr>
+                        <td>Категория</td>
+                        <td>{{ object.category }}</td>
+                    </tr>
+                    <tr>
+                        <td>Цена:</td>
+                        <td>{{ object.price }} руб</td>
+                    </tr>
+                    <tr>
+                        <td>Дата создания:</td>
+                        <td>{{ object.date_of_creation }}</td>
+                    </tr>
+                    <tr>
+                        <td>Дата последнего изменения:</td>
+                            <td>{{ object.last_change_date }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="card-footer">
+            </div>
+        </div>
+    </div>
+
+
+<a href="#" class="btn btn-primary" onclick="history.back();" >Назад</a>
+{% endblock %}
+
