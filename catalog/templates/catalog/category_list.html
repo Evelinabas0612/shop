@@ -1,9 +1,7 @@
 {% extends 'catalog/base.html' %}
-{% load my_templatetags %}
 
 {% block content%}
-<h1>Каталог SuperMag</h1>
- {% for object in object_list %}
+{% for object in object_list %}
             <div class="col-3">
                 <div class="card mb-4 box-shadow">
                     <div class="card-header">
@@ -13,11 +11,10 @@
                         <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                             <li> {{ object.description}}</li>
                         </ul>
-                        <a href="{% url 'catalog:products_by_category' object.pk %}">
-                        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Просмотреть товары</button>
-                        </a>
                     </div>
+                    <a class="p-2 btn btn-outline-primary" href="/">Перейти в Каталог</a>
                 </div>
+
             </div>
           {% endfor %}
 

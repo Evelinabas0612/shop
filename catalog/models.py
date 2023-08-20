@@ -29,6 +29,9 @@ class Product(models.Model):
     date_of_creation = models.DateField(verbose_name='Дата создания')
     date_last_modified = models.DateField(**NULLABLE, verbose_name='Дата последнего изменения')
 
+    views_count = models.IntegerField(default=0, verbose_name='Просмотры')
+    slug = models.CharField(max_length=150, verbose_name='slug', null=True, blank=True)
+
     def __str__(self):
         return f'{self.name} ({self.category}) ({self.price})'
 

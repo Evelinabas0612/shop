@@ -1,0 +1,23 @@
+{% extends 'catalog/base.html' %}
+{% load my_templatetags %}
+
+{% block content %}
+
+{% for object in object_list %}
+<div class="col-6 text-center">
+    <div class="card" style="width: 25rem;">
+        <img src="{% mediapath object.photo %}" class="card-img-top" alt="">
+        <div class="card-body">
+            <a href="/item/{{ object.id }}" class="btn btn-primary"><h5 class="card-title">{{object.name}}</h5></a>
+            <h4 class="card-title">{{object.price}} руб.</h4>
+            <p class="card-text">{{object.description}}</p>
+            <h6 class="card-text">{{object.photo}}</h6>
+
+        </div>
+
+    </div>
+</div>
+{% endfor %}
+<a class="btn btn-primary" href="#"  onclick="history.back();">Назад</a>
+{% endblock %}
+
