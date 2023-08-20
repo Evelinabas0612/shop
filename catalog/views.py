@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 
 from catalog.models import Category, Product
 
@@ -40,6 +40,9 @@ def contacts(request):
         print(f"Имя: {name}\nТелефон: {phone}\nСообщение: {message}\n")
     return render(request, 'catalog/contacts.html')
 
+class ContactsPageView(TemplateView):
+    template_name = 'catalog/contacts.html'
+    extra_context = {'title': 'Контакты'}
 
 # def products(request):
 #     """Контроллер страницы products"""
