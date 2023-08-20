@@ -1,7 +1,8 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, TemplateView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 
-from catalog.models import Category, Product
+from catalog.models import Category, Product, Blog
 
 
 # Create your views here.
@@ -31,18 +32,19 @@ class CategoryListView(ListView):
     }
 
 
-def contacts(request):
-    """Контроллер страницы contacts"""
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
-        print(f"Имя: {name}\nТелефон: {phone}\nСообщение: {message}\n")
-    return render(request, 'catalog/contacts.html')
+# def contacts(request):
+#     """Контроллер страницы contacts"""
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         phone = request.POST.get('phone')
+#         message = request.POST.get('message')
+#         print(f"Имя: {name}\nТелефон: {phone}\nСообщение: {message}\n")
+#     return render(request, 'catalog/contacts.html')
 
 class ContactsPageView(TemplateView):
     template_name = 'catalog/contacts.html'
     extra_context = {'title': 'Контакты'}
+
 
 # def products(request):
 #     """Контроллер страницы products"""
@@ -109,3 +111,50 @@ class ItemDetailView(DetailView):
         self.object.views_count += 1
         self.object.save()
         return self.object
+
+
+class BlogCreateView(CreateView):
+    model = Blog
+    fields = ('title', 'content',)
+    success_url = reverse_lazy('catalog:blog_list')
+
+
+class BlogUpdateView(UpdateView):
+    model = Blog
+    fields = ('title', 'content',)
+    success_url = reverse_lazy('catalog:blog_list')
+
+
+class BlogListView(ListView):
+    model = Blog
+    fields = ('title', 'content', 'is_published')
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(is_published=True)
+        return queryset
+
+
+class BlogDetailView(DetailView):
+    model = Blog
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.object.views_count += 1
+        self.object.save()
+        return self.object
+
+
+class BlogDeleteView(DeleteView):
+    model = Blog
+    success_url = reverse_lazy('catalog:blog_list')
+
+
+def toggle_activity(request, pk):
+    blog_item = get_object_or_404(Blog, pk=pk)
+    if blog_item.is_published:
+        blog_item.is_published = False
+    else:
+        blog_item.is_published = True
+    blog_item.save()
+    return redirect(reverse('catalog:blog_list'))
