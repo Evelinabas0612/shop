@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 NULLABLE = {'null': True, 'blank': True}
@@ -50,6 +51,10 @@ class Blog(models.Model):
 
     def __str__(self):
         return f'{self.title}'
+
+    def get_absolute_url(self):
+        """Slug"""
+        return reverse('blog_detail', kwargs={'slug': self.slug})
 
     class Meta:
         verbose_name = 'blog'
