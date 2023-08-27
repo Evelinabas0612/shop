@@ -2,6 +2,11 @@
 {% load my_templatetags %}
 
 {% block content%}
+    <div class="col-12 pb-md-4">
+
+        <a class="btn btn-primary" href="{%url 'catalog:create_product'%}">Добавить продукт</a>
+
+    </div>
 <h1>Каталог SuperMag</h1>
  {% for object in object_list %}
             <div class="col-3">

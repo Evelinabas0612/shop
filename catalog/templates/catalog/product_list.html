@@ -2,6 +2,12 @@
 {% load my_templatetags %}
 
 {% block content%}
+<h1>Все продукты</h1>
+<div class="col-12 pb-md-4">
+
+        <a class="btn btn-primary" href="{%url 'catalog:create_product'%}">Добавить продукт</a>
+
+    </div>
 {% for object in object_list %}
 <div class="col-6 text-center">
            <div class="card" style="width: 25rem;">
@@ -9,11 +15,24 @@
                 <div class="card-body">
                      <a href="/item/{{ object.id }}" class="btn btn-primary"><h5 class="card-title">{{object.name}}</h5></a>
                     <h4 class="card-title">{{object.price}} руб.</h4>
-                    <p class="card-text">{{object.description}}</p>
+                    <p class="card-text">{{object.description|truncatechars:100}}</p>
                     <h6 class="card-text">{{object.photo}}</h6>
+                    {% for version in object.version_set.all %}
+                    {% if version.is_active %}
+                    <p class="card-text">Версия: {{ version.version_name }} </p>
+                    <p class="card-text">Номер версии: {{ version.version_number }} </p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+              <div class="btn-group m-4">
+                    <a href="{% url 'catalog:item' object.pk %}" type="button"
+                       class="btn btn-sm btn-outline-secondary">Просмотр</a>
+                    <a href="{% url 'catalog:update_product' object.pk %}" type="button"
+                       class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                    <a href="{% url 'catalog:delete_blog' object.pk %}" type="button"
+                       class="btn btn-sm btn-outline-secondary">Удалить</a>
                 </div>
             </div>
-
         </div>
  {% endfor %}
 

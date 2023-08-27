@@ -1,6 +1,7 @@
 {% extends 'catalog/base.html' %}
 
 {% block content%}
+<h1>Категории</h1>
 {% for object in object_list %}
             <div class="col-3">
                 <div class="card mb-4 box-shadow">
@@ -12,7 +13,7 @@
                             <li> {{ object.description}}</li>
                         </ul>
                     </div>
-                    <a class="p-2 btn btn-outline-primary" href="/">Перейти в Каталог</a>
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:products_by_category' object.pk %}">Перейти в Каталог</a>
                 </div>
 
             </div>
