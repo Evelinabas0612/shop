@@ -156,6 +156,7 @@ class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:products')
 
+
 class BlogCreateView(CreateView):
     model = Blog
     fields = ('title', 'content',)
