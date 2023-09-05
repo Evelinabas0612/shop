@@ -3,11 +3,15 @@
 
 {% block content %}
 <h1>Продукты выбранной категории</h1>
+
+{% if user.is_authenticated %}
 <div class="col-12 pb-md-4">
 
         <a class="btn btn-primary" href="{%url 'catalog:create_product'%}">Добавить продукт</a>
 
     </div>
+{% endif%}
+
 {% for object in object_list %}
 <div class="col-6 text-center">
     <div class="card" style="width: 25rem;">

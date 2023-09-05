@@ -2,6 +2,16 @@
 
 {% block content%}
 <h1>Категории</h1>
+
+{% if user.is_authenticated %}
+
+    <div class="col-12 pb-md-4">
+
+        <a class="btn btn-primary" href="{%url 'catalog:create_category'%}">Добавить категорию</a>
+
+    </div>
+{% endif %}
+
 {% for object in object_list %}
             <div class="col-3">
                 <div class="card mb-4 box-shadow">

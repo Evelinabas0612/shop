@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from catalog.models import Product, Version
+from catalog.models import Product, Version, Category
 
 # слова исключения
 EXCEPTION_WORDS = ('казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар')
@@ -35,6 +35,26 @@ class ProductForm(StyleFormMixin, ModelForm):
         cleaned_data = self.cleaned_data['description'].lower()
         if cleaned_data in EXCEPTION_WORDS:
             raise forms.ValidationError('Описание товара содержит запрещенные слова')
+        return cleaned_data
+
+
+class CategoryForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name', 'description')
+
+    def clean_name(self):
+        """Запрещенные слова при создании категории для поля name"""
+        cleaned_data = self.cleaned_data['name'].lower()
+        if cleaned_data in EXCEPTION_WORDS:
+            raise forms.ValidationError('Название категории содержит запрещенные слова')
+        return cleaned_data
+
+    def clean_description(self):
+        """Запрещенные слова при создании категории для поля description"""
+        cleaned_data = self.cleaned_data['description'].lower()
+        if cleaned_data in EXCEPTION_WORDS:
+            raise forms.ValidationError('Описание категории содержит запрещенные слова')
         return cleaned_data
 
 

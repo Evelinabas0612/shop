@@ -1,6 +1,9 @@
+
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
+
+
+from users.models import User
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -25,13 +28,15 @@ class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='Наименование')
     description = models.TextField(max_length=500, verbose_name='Описание')
     photo = models.ImageField(upload_to='products/', **NULLABLE, verbose_name='Изображение')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, verbose_name='Категория')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, **NULLABLE, verbose_name='Категория')
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Цена')
     date_of_creation = models.DateField(verbose_name='Дата создания')
     date_last_modified = models.DateField(**NULLABLE, verbose_name='Дата последнего изменения')
 
     views_count = models.IntegerField(default=0, verbose_name='Просмотры')
-    slug = models.CharField(max_length=150, verbose_name='slug', null=True, blank=True)
+    slug = models.CharField(max_length=150, verbose_name='slug', **NULLABLE)
+
+    owner = models.ForeignKey(User, on_delete=models.PROTECT, **NULLABLE)
 
     def __str__(self):
         return f'{self.name} ({self.category}) ({self.price})'
@@ -74,3 +79,6 @@ class Version(models.Model):
     class Meta:
         verbose_name = 'Версия'
         verbose_name_plural = 'Версии'
+
+
+

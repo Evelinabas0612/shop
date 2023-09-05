@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+{% block card %}
+
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    Вам на почту было отправлено письмо с кодом.
+                    <br>
+                    <form>
+                        <label class="name">Ваш код подтверждения:</label>
+                        <input type="text" id="code">
+                    </form>
+                    <input type="submit" class="btn btn-success" value="Подтвердить">
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'catalog:blog_list' %}" role="button">Отмена
+                    &raquo;</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
