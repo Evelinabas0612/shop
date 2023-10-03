@@ -1,6 +1,8 @@
 import random
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -15,7 +17,7 @@ from users.models import User
 
 
 # Create your views here.
-class RegisterView(CreateView):
+class RegisterView(LoginRequiredMixin, CreateView):
     model = User
     form_class = UserRegisterForm
     template_name = 'users/register.html'
@@ -39,7 +41,7 @@ class RegisterView(CreateView):
         return redirect('users:email_confirmation_sent')
 
 
-class UserConfirmEmailView(View):
+class UserConfirmEmailView(LoginRequiredMixin, View):
     def get(self, request, token):
         try:
             user = User.objects.get(token=token)
@@ -52,7 +54,7 @@ class UserConfirmEmailView(View):
         return redirect('users:login')
 
 
-class EmailConfirmationSentView(TemplateView):
+class EmailConfirmationSentView(LoginRequiredMixin, TemplateView):
     template_name = 'users/email_confirmation_sent.html'
 
     def get_context_data(self, **kwargs):
@@ -61,7 +63,7 @@ class EmailConfirmationSentView(TemplateView):
         return context
 
 
-class EmailConfirmView(TemplateView):
+class EmailConfirmView(LoginRequiredMixin, TemplateView):
     template_name = 'users/email_verified.html'
 
     def get_context_data(self, **kwargs):
@@ -70,7 +72,7 @@ class EmailConfirmView(TemplateView):
         return context
 
 
-class EmailConfirmationFailedView(TemplateView):
+class EmailConfirmationFailedView(LoginRequiredMixin,TemplateView):
     """Ошибка подтверждения по электронной почте"""
     template_name = 'users/email_confirmation_failed.html'
 
@@ -80,7 +82,7 @@ class EmailConfirmationFailedView(TemplateView):
         return context
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')
@@ -96,6 +98,7 @@ class ProfileView(UpdateView):
         return context
 
 
+@login_required
 def generate_new_password(request):
     """Сброс пароля зарегистрированного пользователя в профиле"""
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(13)])
@@ -110,7 +113,7 @@ def generate_new_password(request):
     return redirect(reverse('catalog:catalog_list'))
 
 
-class UserForgotPasswordView(SuccessMessageMixin, PasswordResetView):
+class UserForgotPasswordView(LoginRequiredMixin, SuccessMessageMixin, PasswordResetView):
     """Представление по сбросу пароля по почте"""
     form_class = UserForgotPasswordForm
     template_name = 'users/user_password_reset.html'
@@ -125,7 +128,8 @@ class UserForgotPasswordView(SuccessMessageMixin, PasswordResetView):
         return context
 
 
-class UserPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView):
+class UserPasswordResetConfirmView(LoginRequiredMixin,
+                                   SuccessMessageMixin, PasswordResetConfirmView):
     """Представление установки нового пароля"""
     form_class = UserSetNewPasswordForm
     template_name = 'users/user_password_set_new.html'

@@ -1,4 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.forms import inlineformset_factory
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
@@ -9,6 +12,7 @@ from catalog.models import Category, Product, Blog, Version
 
 
 # Create your views here.
+
 
 def catalog_list(request):
     """Контроллер страницы catalog_list"""
@@ -26,7 +30,6 @@ def catalog_list(request):
 #         'title': 'Категории'
 #     }
 #     return render(request, 'catalog\category_list.html', context)
-
 
 class CategoryListView(ListView):
     model = Category
@@ -127,35 +130,84 @@ class ProductCreateView(CreateView):
     success_url = reverse_lazy('catalog:products')
     template_name = 'catalog/product_form.html'
 
+    def test_func(self):
+        return self.request.user
 
-class ProductUpdateView(UpdateView):
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        VersionFormset = inlineformset_factory(Product, Version, VersionForm, extra=1)
+        if self.request.method == 'POST':
+            context_data['formset'] = VersionFormset(self.request.POST)
+        else:
+            context_data['formset'] = VersionFormset()
+
+        return context_data
+
+    def form_valid(self, form):
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+
+        if self.request.user.is_authenticated:
+            self.object.owner = self.request.user
+            self.object.save()
+
+        return super().form_valid(form)
+
+
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:products')
     template_name = 'catalog/product_form.html'
 
+    def test_func(self):
+        return self.request.user.is_staff or self.get_object().owner == self.request.user
+
+    # def get_object(self, queryset=None):
+    #     self.object = super().get_object(queryset)
+    #     if self.object.owner != self.request.user:
+    #         raise Http404
+    #     return self.object
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        VersionFormset = inlineformset_factory(Product, Version, VersionForm, extra=1)
         if self.request.method == 'POST':
-            context_data['formset'] = VersionFormset(self.request.POST, instance=self.object)
+            context_data['formset'] = VersionFormset(self.request.POST)
         else:
-            context_data['formset'] = VersionFormset(instance=self.object)
+            context_data['formset'] = VersionFormset()
+
         return context_data
 
     def form_valid(self, form):
-        context_data = self.get_context_data()
-        formset = context_data['formset']
+        formset = self.get_context_data()['formset']
         self.object = form.save()
         if formset.is_valid():
             formset.instance = self.object
             formset.save()
+
+        if self.request.user.is_authenticated:
+            self.object.owner = self.request.user
+            self.object.save()
+
         return super().form_valid(form)
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:products')
+
+    def test_func(self):
+        return self.request.user.is_superuser or self.get_object().owner == self.request.user
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user:
+            raise Http404
+        return self.object
 
 
 class CategoryCreateView(CreateView):
@@ -165,16 +217,28 @@ class CategoryCreateView(CreateView):
     template_name = 'catalog/category_form.html'
 
 
-class CategoryUpdateView(UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     success_url = reverse_lazy('catalog:categories')
     template_name = 'catalog/category_form.html'
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user:
+            raise Http404
+        return self.object
 
-class CategoryDeleteView(DeleteView):
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('catalog:categories')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user:
+            raise Http404
+        return self.object
 
 
 class BlogCreateView(CreateView):
@@ -191,9 +255,15 @@ class BlogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     fields = ('title', 'content',)
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user:
+            raise Http404
+        return self.object
 
     # success_url = reverse_lazy('catalog:blog_detail')
 
@@ -229,9 +299,15 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
     model = Blog
     success_url = reverse_lazy('catalog:blog_list')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user:
+            raise Http404
+        return self.object
 
 
 def toggle_activity(request, pk):

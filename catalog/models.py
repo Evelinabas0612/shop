@@ -37,6 +37,23 @@ class Product(models.Model):
     slug = models.CharField(max_length=150, verbose_name='slug', **NULLABLE)
 
     owner = models.ForeignKey(User, on_delete=models.PROTECT, **NULLABLE)
+    is_published = models.BooleanField(default=False, verbose_name='Опубликовано')
+
+    class Meta:
+        permissions = [
+            (
+                "set_published_status",
+                "Can publish card"
+            ),
+            (
+                "set_description",
+                "Can description product",
+            ),
+            (
+                "set_category",
+                "Can category product"
+            )
+        ]
 
     def __str__(self):
         return f'{self.name} ({self.category}) ({self.price})'

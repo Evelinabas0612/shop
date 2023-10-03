@@ -1,17 +1,18 @@
 {% extends 'catalog/base.html' %}
 {% load my_templatetags %}
 
-{% block content%}
+{% block content %}
 <h1>Все продукты</h1>
-{% if user.is_authenticated %}
-<div class="col-12 pb-md-4">
+    {% if user.is_authenticated %}
+    <div class="col-12 pb-md-4">
 
-        <a class="btn btn-primary" href="{%url 'catalog:create_product'%}">Добавить продукт</a>
+            <a class="btn btn-primary" href="{%url 'catalog:create_product'%}">Добавить продукт</a>
 
-    </div>
-{% endif %}
+        </div>
+    {% endif %}
 {% for object in object_list %}
-<div class="col-6 text-center">
+{% if object.is_published == True %}
+        <div class="col-6 text-center">
            <div class="card" style="width: 25rem;">
                 <img src="{% mediapath object.photo %}" class="card-img-top" alt="">
                 <div class="card-body">
@@ -23,20 +24,26 @@
                     {% if version.is_active %}
                     <p class="card-text">Версия: {{ version.version_name }} </p>
                     <p class="card-text">Номер версии: {{ version.version_number }} </p>
+                </div>
                     {% endif %}
                     {% endfor %}
-                </div>
               <div class="btn-group m-4">
                     <a href="{% url 'catalog:item' object.pk %}" type="button"
                        class="btn btn-sm btn-outline-secondary">Просмотр</a>
+                  {% if object.owner == user or user|has_group:'модератор' %}
                     <a href="{% url 'catalog:update_product' object.pk %}" type="button"
                        class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                  {% endif %}
+                  {% if object.owner == user or user.is_superuser == True %}
                     <a href="{% url 'catalog:delete_product' object.pk %}" type="button"
                        class="btn btn-sm btn-outline-secondary">Удалить</a>
-                </div>
+                  {% endif %}
+
             </div>
+           </div>
         </div>
- {% endfor %}
+{% endif %}
+{% endfor %}
 
 {% endblock %}
 
