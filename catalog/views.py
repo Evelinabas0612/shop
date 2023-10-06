@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core import cache
 from django.forms import inlineformset_factory
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,6 +11,7 @@ from pytils.translit import slugify
 
 from catalog.forms import ProductForm, VersionForm, CategoryForm
 from catalog.models import Category, Product, Blog, Version
+from catalog.service import get_categories_cache
 
 
 # Create your views here.
@@ -16,8 +19,17 @@ from catalog.models import Category, Product, Blog, Version
 
 def catalog_list(request):
     """Контроллер страницы catalog_list"""
+    # if settings.CACHE_ENABLED:
+    #     key = 'category_list'
+    #     category_list = cache.get(key)
+    #     if category_list is None:
+    #         category_list = Category.objects.all()
+    #         cache.set(key, category_list)
+    # else:
+    #     category_list = Category.objects.all()
+
     context = {
-        'object_list': Category.objects.all(),
+        'object_list': get_categories_cache(),
         'title': 'Главная'
     }
     return render(request, 'catalog\catalog_list.html', context)
